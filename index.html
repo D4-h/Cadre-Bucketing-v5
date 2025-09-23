@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadre Bucketing & RR Analysis Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f7fc;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --header-bg: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--header-bg);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            flex: 1;
+        }
+
+        .header-logo {
+            height: 50px;
+            width: auto;
+            margin-left: 1rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: var(--accent-color);
+        }
+
+        main {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-content.hidden {
+            display: none;
+        }
+
+        /* Home Page Styles */
+        .home-layout {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+
+        .left-panel {
+            flex: 1;
+            position: sticky;
+            top: 2rem;
+            min-width: 300px;
+        }
+
+        .left-panel .card {
+            padding: 2rem;
+        }
+
+        .left-panel h4 {
+            color: #555;
+            margin-top: 0;
+            font-weight: normal;
+        }
+
+        .left-panel .card p {
+            color: var(--text-color);
+            font-size: 1rem;
+            font-weight: normal;
+        }
+
+        .right-panel {
+            flex: 2;
+        }
+
+        .right-panel h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent-color), var(--header-bg));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .highlight-section {
+            display: flex;
+            flex-direction: row;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .highlight-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .highlight-section:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+
+        .image-container {
+            flex: 1.2;
+        }
+
+        .highlight-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .content-body {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .content-body h3 {
+            margin-top: 0;
+            color: var(--header-bg);
+            font-size: 1.4rem;
+        }
+
+        .content-body p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 900px) {
+            .home-layout {
+                flex-direction: column;
+            }
+            .left-panel {
+                position: static;
+                width: 100%;
+            }
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+
+        .filters select, .filters button {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--card-bg);
+            font-size: 1rem;
+        }
+
+        .filters button {
+            background-color: var(--accent-color);
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        .filters button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--header-bg);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .card p {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 0.5rem 0 0 0;
+        }
+
+        /* Enhanced Group Cards */
+        .card-group-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card.small-card {
+            text-align: center;
+        }
+
+        .card.small-card h4 {
+            font-size: 0.9rem;
+            margin: 0 0 0.5rem 0;
+            color: #666;
+        }
+
+        .card.small-card .group-title {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin-bottom: 0.3rem;
+        }
+
+        .card.small-card .cadre-count {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 0.3rem 0;
+        }
+
+        .card.small-card .posts-label {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.5rem;
+        }
+
+        .card.small-card .posts-count {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #555;
+            margin-top: 0.2rem;
+        }
+
+        /* Segmented Bar */
+        .segmented-bar {
+            display: flex;
+            width: 100%;
+            height: 45px;
+            border-radius: 25px;
+            overflow: hidden;
+            background-color: var(--border-color);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 1rem;
+        }
+
+        .segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            transition: width 0.5s ease-in-out;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .segment span {
+            padding: 0 10px;
+        }
+
+        /* Dashboard Grid for RR Page */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .revision-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .revision-card {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--success-color);
+            text-align: center;
+        }
+
+        .revision-card.change {
+            border-left-color: var(--accent-color);
+        }
+
+        .revision-card h3 {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            border: none;
+            padding: 0;
+        }
+
+        .revision-card .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 250px;
+            margin-top: 1rem;
+        }
+
+        /* Table Styles */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        thead {
+            background-color: var(--header-bg);
+            color: white;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Public Service Recruitment Reform Dashboard</h1>
+        <nav>
+            <a href="#" class="nav-link active" data-page="home">Project Overview</a>
+            <a href="#" class="nav-link" data-page="cadreAnalysis">Cadre Bucketing Analysis</a>
+            <a href="#" class="nav-link" data-page="rrAnalysis">RR Analysis</a>
+        </nav>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Seal_of_Maharashtra.svg/800px-Seal_of_Maharashtra.svg.png" alt="Maharashtra Government" class="header-logo">
+    </header>
+
+    <main id="home" class="page-content">
+        <div class="home-layout">
+            <div class="left-panel">
+                <div class="card">
+                    <h2>Project Overview</h2>
+                    <h4>Public Service Recruitment Reform in Maharashtra</h4>
+                    <p>Our vision is to build a modern, tech-driven, and transparent recruitment system for the people of Maharashtra, truly realizing the goal of 'Requisition to Appointment' (मागणीपत्र ते नियुक्तिपत्र).</p>
+                    <p>We are undertaking a landmark initiative to streamline the recruitment process for nearly 2,500 government cadres, creating a simplified and efficient path for over 15 lakh aspirants who apply each year.</p>
+                    <p>We are undertaking a landmark initiative to streamline the recruitment process for nearly 2,500 government cadres, creating a simplified and efficient path for over 15 lakh aspirants who apply each year.</p>
+                    <p>This reform will deliver a simple and fair system that significantly reduces delays and ensures that the most meritorious candidates are selected to serve the state of Maharashtra.</p>
+                </div>
+            </div>
+            <div class="right-panel">
+                <h2>Strategy Towards Reform</h2>
+
+                <div class="highlight-section">
+                    <div class="image-container">
+                        <img src="images/Dept PPT_pages-to-jpg-0001.jpg" alt="Human Resource Structure" class="highlight-image">
+                    </div>
+                    <div class="content-body">
+                        <h3>Resource Structure</h3>
+                        <p>The pyramid illustrates the distribution of these cadres across hierarchical groups, with Group C forming the largest base.</p>
+                    </div>
+                </div>
+
+                <div class="highlight-section">
+                    <div class="image-container">
+                         <img src="images/Dept PPT_pages-to-jpg-0002.jpg" alt="Exam Schemes" class="highlight-image">
+                    </div>
+                    <div class="content-body">
+                        <h3>Exam Schemes</h3>
+                        <p>This complexity results in a multitude of exams, with over 2500 different recruitment tests being conducted for various cadres.</p>
+                    </div>
+                </div>
+
+                <div class="highlight-section">
+                    <div class="image-container">
+                        <img src="images/Dept PPT_pages-to-jpg-0003.jpg" alt="Identified Issues" class="highlight-image">
+                    </div>
+                    <div class="content-body">
+                        <h3>Identified Issues</h3>
+                        <p>Critical flaws identified in the existing recruitment rules that compromise the quality and fairness of hiring.</p>
+                    </div>
+                </div>
+
+                <div class="highlight-section">
+                    <div class="image-container">
+                         <img src="images/Dept PPT_pages-to-jpg-0009.jpg" alt="Illegible Physical Records" class="highlight-image">
+                    </div>
+                    <div class="content-body">
+                        <h3>Illegible Physical Records</h3>
+                        <p>The reliance on poorly maintained and often illegible physical copies of recruitment rules makes it difficult to access and digitize criteria.</p>
+                    </div>
+                </div>
+
+                <div class="highlight-section">
+                    <div class="image-container">
+                         <img src="images/Dept PPT_pages-to-jpg-0010.jpg" alt="Preferences in Eligibility" class="highlight-image">
+                    </div>
+                    <div class="content-body">
+                        <h3>Preferences in Eligibility</h3>
+                        <p>Subjective clauses, such as preferring candidates with post-graduate degrees, complicate the selection process and can lead to inconsistencies.</p>
+                    </div>
+                </div>
+
+                <div class="highlight-section">
+                    <div class="image-container">
+                         <img src="images/Dept PPT_pages-to-jpg-0011.jpg" alt="Restrictive Institute Recognition" class="highlight-image">
+                    </div>
+                    <div class="content-body">
+                        <h3>Restrictive Institute Recognition</h3>
+                        <p>Recruitment rules that recognize qualifications from only one specific institute, limiting the pool of eligible candidates.</p>
+                    </div>
+                </div>
+
+                <div class="highlight-section">
+                    <div class="image-container">
+                         <img src="images/Dept PPT_pages-to-jpg-0012.jpg" class="highlight-image">
+                    </div>
+                    <div class="content-body">
+                        <h3>Solution: Three Proposals for RR Revamp</h3>
+                        <p>The strategy involves ensuring uniformity for the same cadres, standardizing all RRs using a model template, and digitizing them into a single repository.</p>
+</div>
+                </div>
+
+                <div class="highlight-section">
+                    <div class="image-container">
+                         <img src="images/Dept PPT_pages-to-jpg-0013.jpg" class="highlight-image">
+                    </div>
+                    <div class="content-body">
+                        <h3>Solution: Three Proposals for RR Revamp</h3>
+                        <p>The strategy involves ensuring uniformity for the same cadres, standardizing all RRs using a model template, and digitizing them into a single repository.</p>
+</div>
+                </div>
+
+                <div class="highlight-section">
+                    <div class="image-container">
+                         <img src="images/Dept PPT_pages-to-jpg-0014.jpg" class="highlight-image">
+                    </div>
+                    <div class="content-body">
+                        <h3>Solution: Cadre Bucketing - First Level	</h3>
+                        <p>The strategic framework of "bucketing" to streamline and rationalize the ~2500 cadres. The first level of this framework involves a broad functional classification of all cadres into three primary categories: Administrative, Technical, and Developmental.</p>
+</div>
+                </div>
+
+                <div class="highlight-section">
+                    <div class="image-container">
+                         <img src="images/Dept PPT_pages-to-jpg-0015.jpg" class="highlight-image">
+                    </div>
+                    <div class="content-body">
+                        <h3>Solution: Cadre Bucketing - Administrative Domain</h3>
+                        <p>Bucketing for Administrative cadres, breaking them down into more specific domains. These sub-categories include General, Legal, Finance, Law Enforcement, and Other Admin to better group similar roles.</p>
+</div>
+                </div>
+
+                <div class="highlight-section">
+                    <div class="image-container">
+                         <img src="images/Dept PPT_pages-to-jpg-0016.jpg" class="highlight-image">
+                    </div>
+                    <div class="content-body">
+                        <h3>Solution: Cadre Bucketing - Technical Domain</h3>
+                        <p>Bucketing for Technical cadres, organizing them based on their area of expertise. The primary sub-groups include Engineering, Health, Sciences, and Mathematics/Statistical, among others.</p>
+</div>
+                </div>
+
+                <div class="highlight-section">
+                    <div class="image-container">
+                         <img src="images/Dept PPT_pages-to-jpg-0017.jpg" class="highlight-image">
+                    </div>
+                    <div class="content-body">
+                        <h3>Solution: Cadre Bucketing - Developmental Domain</h3>
+                        <p>Bucketing for Developmental cadres, which are grouped based on their functional roles in societal development. The key domains identified are Education and Social Welfare, with a third category for other developmental roles.</p>
+</div>
+                </div>
+
+                <div class="highlight-section">
+                    <div class="image-container">
+                         <img src="images/Dept PPT_pages-to-jpg-0018.jpg" class="highlight-image">
+                    </div>
+                    <div class="content-body">
+                        <h3>Solution: Guiding Principles for Bucketing</h3>
+                        <p>The four principal lenses, or criteria, that guide the cadre bucketing and recruitment rule analysis. The approach focuses on re-evaluating the relevance and verifiability of requirements related to Education, Experience, Skills, and Physical Qualifications</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <main id="cadreAnalysis" class="page-content hidden">
+        <div class="filters">
+            <select id="dept-filter-cadre"></select>
+            <select id="est-filter-cadre"></select>
+            <button id="clear-filter-cadre">Clear Filters</button>
+        </div>
+        
+        <div class="card-group-container">
+            <div class="card small-card">
+                <h4>Group A</h4>
+                <div class="cadre-count" id="group-a-count-cadre">0</div>
+                <div class="posts-label">Total Posts</div>
+                <div class="posts-count" id="group-a-posts-cadre">0</div>
+            </div>
+            <div class="card small-card">
+                <h4>Group B</h4>
+                <div class="cadre-count" id="group-b-count-cadre">0</div>
+                <div class="posts-label">Total Posts</div>
+                <div class="posts-count" id="group-b-posts-cadre">0</div>
+            </div>
+            <div class="card small-card">
+                <h4>Group B (NG)</h4>
+                <div class="cadre-count" id="group-b-ng-count-cadre">0</div>
+                <div class="posts-label">Total Posts</div>
+                <div class="posts-count" id="group-b-ng-posts-cadre">0</div>
+            </div>
+            <div class="card small-card">
+                <h4>Group C</h4>
+                <div class="cadre-count" id="group-c-count-cadre">0</div>
+                <div class="posts-label">Total Posts</div>
+                <div class="posts-count" id="group-c-posts-cadre">0</div>
+            </div>
+        </div>
+
+        <div class="card full-width">
+            <h3>Functional Distribution</h3>
+            <div id="functional-dist-cadre"></div>
+        </div>
+
+        <div class="card full-width">
+            <h3>Proposed Bucketing Details</h3>
+            <div class="table-container">
+                <table id="cadre-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Establishment</th>
+                            <th>Cadre Name</th>
+                            <th>Group</th>
+                            <th>Pay Scale</th>
+                            <th>Broad Function</th>
+                            <th>Domain Specific</th>
+                            <th>Proposed Category</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <main id="rrAnalysis" class="page-content hidden">
+        <div class="filters">
+            <select id="dept-filter-rr"></select>
+            <select id="est-filter-rr"></select>
+            <button id="clear-filter-rr">Clear Filters</button>
+        </div>
+        
+        <div class="card-group-container">
+            <div class="card small-card">
+                <h4>Group A</h4>
+                <div class="cadre-count" id="group-a-count-rr">0</div>
+                <div class="posts-label">Total Posts</div>
+                <div class="posts-count" id="group-a-posts-rr">0</div>
+            </div>
+            <div class="card small-card">
+                <h4>Group B</h4>
+                <div class="cadre-count" id="group-b-count-rr">0</div>
+                <div class="posts-label">Total Posts</div>
+                <div class="posts-count" id="group-b-posts-rr">0</div>
+            </div>
+            <div class="card small-card">
+                <h4>Group B (NG)</h4>
+                <div class="cadre-count" id="group-b-ng-count-rr">0</div>
+                <div class="posts-label">Total Posts</div>
+                <div class="posts-count" id="group-b-ng-posts-rr">0</div>
+            </div>
+            <div class="card small-card">
+                <h4>Group C</h4>
+                <div class="cadre-count" id="group-c-count-rr">0</div>
+                <div class="posts-label">Total Posts</div>
+                <div class="posts-count" id="group-c-posts-rr">0</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>RR Rules Breakdown</h3>
+                <div class="chart-container">
+                    <canvas id="rr-breakdown-chart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Analysis of RR Quality</h3>
+                <div class="chart-container">
+                    <canvas id="rr-quality-chart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h3>RR Creation Year</h3>
+                <div class="chart-container">
+                    <canvas id="rr-year-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="revision-cards">
+            <div class="revision-card">
+                <h3>No Recruitment Rule Change</h3>
+                <div class="value" id="no-change-count">0</div>
+            </div>
+            <div class="revision-card change">
+                <h3>Recruitment Rule Change</h3>
+                <div class="value" id="change-count">0</div>
+            </div>
+        </div>
+            
+        <div class="card full-width">
+            <h3>Recruitment Rules Details</h3>
+            <div class="table-container">
+                <table id="rr-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Establishment</th>
+                            <th>Cadre Name</th>
+                            <th>Group</th>
+                            <th>Pay Scale</th>
+                            <th>Education</th>
+                            <th>Experience</th>
+                            <th>Remark</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const cadreData = [
+            { "S.no": 1, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "A", "Cadre Name": "MAS Group-A (Dy Director)", "DR Posts": 143, "Vacant Posts (DR)": 69, "Broad Cadre Bucketing": "Technical", "Domain Specific Cadre Bucketing": "Agriculture and Allied", "Proposed combined": "Already in MPSC Combined", "Pay Scale": "S20 (56100 - 177500)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "No", "What change in RR": "No changes in RR", "Bucketing": "No Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" },
+            { "S.no": 2, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "B", "Cadre Name": "M.A.S. Gr-B (Jr.) Gazzeted (Agriculture Officer)", "DR Posts": 882, "Vacant Posts (DR)": 298, "Broad Cadre Bucketing": "Technical", "Domain Specific Cadre Bucketing": "Agriculture and Allied", "Proposed combined": "Already in MPSC Combined", "Pay Scale": "S15 (41800 - 132300)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "No", "What change in RR": "No changes in RR", "Bucketing": "No Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" },
+            { "S.no": 3, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "B", "Cadre Name": "MAS Group-B (Technical Officer)", "DR Posts": 475, "Vacant Posts (DR)": 124, "Broad Cadre Bucketing": "Technical", "Domain Specific Cadre Bucketing": "Agriculture and Allied", "Proposed combined": "Already in MPSC Combined", "Pay Scale": "S16 (44900 - 142400)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "No", "What change in RR": "No changes in RR", "Bucketing": "No Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" },
+            { "S.no": 4, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Assistant Superintendent", "DR Posts": 100, "Vacant Posts (DR)": 42, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Junior Admin (General) JA(Gen) Combined", "Pay Scale": "S13 (35400 - 112400)", "Degree": "Bachelor's", "Exp": 3, "Need changes in RR": "Yes", "What change in RR": "Experience", "Bucketing": "Recruitment Rule Change", "Education": "Bachelor's", "Experience": "3" },
+            { "S.no": 5, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Stenographer (Lower Grade)", "DR Posts": 36, "Vacant Posts (DR)": 36, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Junior Admin (General) JA(Gen) Combined", "Pay Scale": "S14 (38600 - 122800)", "Degree": "HSC/SSC", "Exp": 0, "Need changes in RR": "Yes", "What change in RR": "Skill Qualification/ Test", "Bucketing": "Recruitment Rule Change", "Education": "HSC/SSC", "Experience": "0" },
+            { "S.no": 6, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Stenographer (Higher Grade)", "DR Posts": 9, "Vacant Posts (DR)": 5, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Junior Admin (General) JA(Gen) Combined", "Pay Scale": "S15 (41800 - 132300)", "Degree": "HSC/SSC", "Exp": 0, "Need changes in RR": "Yes", "What change in RR": "Skill Qualification/ Test", "Bucketing": "Recruitment Rule Change", "Education": "HSC/SSC", "Experience": "0" },
+            { "S.no": 7, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Junior Clerk", "DR Posts": 1191, "Vacant Posts (DR)": 637, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Non-gazetted Admin Staff", "Pay Scale": "S6 (19900 - 63200)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "Yes", "What change in RR": "Skill Test", "Bucketing": "Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" },
+            { "S.no": 8, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Senior Clerk", "DR Posts": 220, "Vacant Posts (DR)": 75, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Non-gazetted Admin Staff", "Pay Scale": "S8 (25500 - 81100)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "No", "What change in RR": "No changes in RR", "Bucketing": "No Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" },
+            { "S.no": 9, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Steno Typist", "DR Posts": 37, "Vacant Posts (DR)": 35, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Non-gazetted Admin Staff", "Pay Scale": "S8 (25500 - 81100)", "Degree": "HSC/SSC", "Exp": 0, "Need changes in RR": "Yes", "What change in RR": "Skill Qualification/ Test", "Bucketing": "Recruitment Rule Change", "Education": "HSC/SSC", "Experience": "0" },
+            { "S.no": 10, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Assistant Agriculture Officer", "DR Posts": 10439, "Vacant Posts (DR)": 1316, "Broad Cadre Bucketing": "Technical", "Domain Specific Cadre Bucketing": "Agriculture and Allied", "Proposed combined": "Non-gazetted Technical Staff", "Pay Scale": "S8 (25500 - 81100)", "Degree": "Diploma", "Exp": 0, "Need changes in RR": "No", "What change in RR": "No changes in RR", "Bucketing": "No Recruitment Rule Change", "Education": "Diploma", "Experience": "0" },
+            { "S.no": 11, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "A", "Cadre Name": "Administrative Service Gr-A Administrative Officer", "DR Posts": 5, "Vacant Posts (DR)": 2, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Senior Admin (General) SA(Gen) Combined", "Pay Scale": "S18 (49100 - 155800)", "Degree": "Bachelor's", "Exp": 5, "Need changes in RR": "Yes", "What change in RR": "Experience", "Bucketing": "Recruitment Rule Change", "Education": "Bachelor's", "Experience": "5" },
+            { "S.no": 12, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "B", "Cadre Name": "Administrative Service Gr-B Asst. Administrative Officer", "DR Posts": 22, "Vacant Posts (DR)": 22, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Senior Admin (General) SA(Gen) Combined", "Pay Scale": "S15 (41800 - 132300)", "Degree": "Bachelor's", "Exp": 3, "Need changes in RR": "Yes", "What change in RR": "Experience", "Bucketing": "Recruitment Rule Change", "Education": "Bachelor's", "Experience": "3" },
+            { "S.no": 13, "Establishment": "Animal Husbandry", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Steno (Lower)", "DR Posts": 4, "Vacant Posts (DR)": 0, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Junior Admin (General) JA(Gen) Combined", "Pay Scale": "S14 (38600 - 122800)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "Yes", "What change in RR": "Education Qualification and Skill Qualification/ Test", "Bucketing": "Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" },
+            { "S.no": 14, "Establishment": "Animal Husbandry", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Steno (Higher)", "DR Posts": 2, "Vacant Posts (DR)": 0, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Junior Admin (General) JA(Gen) Combined", "Pay Scale": "S15 (41800 - 132300)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "Yes", "What change in RR": "Skill Qualification/ Test", "Bucketing": "Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" },
+            { "S.no": 15, "Establishment": "Animal Husbandry", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Statistical Investigator", "DR Posts": 4, "Vacant Posts (DR)": 3, "Broad Cadre Bucketing": "Technical", "Domain Specific Cadre Bucketing": "Mathematics / Statistical", "Proposed combined": "Junior Technical (Mathematics / Statistics) JT(MS) Combined", "Pay Scale": "S14 (38600 - 122800)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "No", "What change in RR": "No changes in RR", "Bucketing": "No Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" }
+        ];
+
+        const rrQualityData = [
+            { "Dept": "Agriculture & Allied", "Decade": "2011 - 2020", "Direct recruitment": "Promotion/Deputation", "Is legible": "NO", "Is Specific": "NO", "Is Complete": "YES" },
+            { "Dept": "Agriculture & Allied", "Decade": "2011 - 2020", "Direct recruitment": "Direct Recruitment", "Is legible": "NO", "Is Specific": "NO", "Is Complete": "YES" },
+            { "Dept": "Agriculture & Allied", "Decade": "Before 2000", "Direct recruitment": "Group D", "Is legible": "NO", "Is Specific": "NO", "Is Complete": "NO" },
+            { "Dept": "Agriculture & Allied", "Decade": "2011 - 2020", "Direct recruitment": "Dead Cadre", "Is legible": "NO", "Is Specific": "NO", "Is Complete": "NO" },
+            { "Dept": "Agriculture & Allied", "Decade": "2011 - 2020", "Direct recruitment": "Promotion/Deputation", "Is legible": "YES", "Is Specific": "NO", "Is Complete": "" },
+            { "Dept": "Agriculture & Allied", "Decade": "No Date on RR", "Direct recruitment": "Direct Recruitment", "Is legible": "NO", "Is Specific": "NO", "Is Complete": "NO" },
+            { "Dept": "Agriculture & Allied", "Decade": "2021 and above", "Direct recruitment": "Direct Recruitment", "Is legible": "YES", "Is Specific": "YES", "Is Complete": "YES" }
+        ];
+
+        let rrBreakdownChart, rrQualityChart, rrYearChart;
+
+        const getUniqueValues = (data, key) => [...new Set(data.map(item => item[key]))];
+        const countBy = (data, key) => data.reduce((acc, item) => {
+            acc[item[key]] = (acc[item[key]] || 0) + 1;
+            return acc;
+        }, {});
+
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = link.getAttribute('data-page');
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                document.querySelectorAll('.page-content').forEach(page => {
+                    page.classList.toggle('hidden', page.id !== pageId);
+                });
+            });
+        });
+
+        function populateFiltersCadre() {
+            const departments = getUniqueValues(cadreData, 'Department');
+            const establishments = getUniqueValues(cadreData, 'Establishment');
+            document.getElementById('dept-filter-cadre').innerHTML = '<option value="">All Departments</option>' + 
+                departments.map(d => `<option value="${d}">${d}</option>`).join('');
+            document.getElementById('est-filter-cadre').innerHTML = '<option value="">All Establishments</option>' + 
+                establishments.map(e => `<option value="${e}">${e}</option>`).join('');
+        }
+
+        function populateFiltersRr() {
+            const departments = getUniqueValues(cadreData, 'Department');
+            const establishments = getUniqueValues(cadreData, 'Establishment');
+            document.getElementById('dept-filter-rr').innerHTML = '<option value="">All Departments</option>' + 
+                departments.map(d => `<option value="${d}">${d}</option>`).join('');
+            document.getElementById('est-filter-rr').innerHTML = '<option value="">All Establishments</option>' + 
+                establishments.map(e => `<option value="${e}">${e}</option>`).join('');
+        }
+
+        function updateCadreDashboard(filteredData) {
+            const groupCounts = countBy(filteredData, 'Group');
+            
+            // Group A
+            const groupAData = filteredData.filter(d => d.Group === 'A');
+            const groupAPosts = groupAData.reduce((sum, item) => sum + item['DR Posts'], 0);
+            document.getElementById('group-a-count-cadre').textContent = groupCounts['A'] || 0;
+            document.getElementById('group-a-posts-cadre').textContent = groupAPosts.toLocaleString();
+            
+            // Group B
+            const groupBData = filteredData.filter(d => d.Group === 'B');
+            const groupBPosts = groupBData.reduce((sum, item) => sum + item['DR Posts'], 0);
+            document.getElementById('group-b-count-cadre').textContent = groupCounts['B'] || 0;
+            document.getElementById('group-b-posts-cadre').textContent = groupBPosts.toLocaleString();
+            
+            // Group B (NG)
+            document.getElementById('group-b-ng-count-cadre').textContent = 0;
+            document.getElementById('group-b-ng-posts-cadre').textContent = '0';
+            
+            // Group C
+            const groupCData = filteredData.filter(d => d.Group === 'C');
+            const groupCPosts = groupCData.reduce((sum, item) => sum + item['DR Posts'], 0);
+            document.getElementById('group-c-count-cadre').textContent = groupCounts['C'] || 0;
+            document.getElementById('group-c-posts-cadre').textContent = groupCPosts.toLocaleString();
+
+            const functionalCounts = countBy(filteredData, 'Broad Cadre Bucketing');
+            const totalFunctional = filteredData.length;
+            const functionalDistContainer = document.getElementById('functional-dist-cadre');
+
+            const categoryColors = {
+                'Administration': 'linear-gradient(to right, #6a5acd, #8a7de0)',
+                'Technical': 'linear-gradient(to right, #20a4f3, #53c3f3)'
+            };
+
+            let segmentsHTML = '';
+            for (const key in functionalCounts) {
+                const count = functionalCounts[key];
+                const percentage = totalFunctional > 0 ? (count / totalFunctional) * 100 : 0;
+                const color = categoryColors[key] || 'gray';
+                if (percentage > 0) {
+                    segmentsHTML += `
+                        <div class="segment" 
+                             style="width: ${percentage}%; background: ${color};" 
+                             title="${key}: ${count} (${percentage.toFixed(1)}%)">
+                            <span>${key} ${count}</span>
+                        </div>`;
+                }
+            }
+
+            functionalDistContainer.innerHTML = totalFunctional === 0 ? 
+                '<p style="text-align: center; color: #888;">No data</p>' : 
+                `<div class="segmented-bar">${segmentsHTML}</div>`;
+
+            const tableBody = document.querySelector('#cadre-table tbody');
+            tableBody.innerHTML = filteredData.map(row => `
+                <tr>
+                    <td>${row.Department}</td>
+                    <td>${row.Establishment}</td>
+                    <td>${row['Cadre Name']}</td>
+                    <td>${row.Group}</td>
+                    <td>${row['Pay Scale']}</td>
+                    <td>${row['Broad Cadre Bucketing']}</td>
+                    <td>${row['Domain Specific Cadre Bucketing']}</td>
+                    <td>${row['Proposed combined']}</td>
+                </tr>
+            `).join('');
+        }
+
+        function applyCadreFilters() {
+            const dept = document.getElementById('dept-filter-cadre').value;
+            const est = document.getElementById('est-filter-cadre').value;
+            const filtered = cadreData.filter(item => {
+                return (!dept || item.Department === dept) && (!est || item.Establishment === est);
+            });
+            updateCadreDashboard(filtered);
+        }
+
+        function updateRrDashboard(filteredData) {
+            const groupCounts = countBy(filteredData, 'Group');
+            
+            // Group A
+            const groupAData = filteredData.filter(d => d.Group === 'A');
+            const groupAPosts = groupAData.reduce((sum, item) => sum + item['DR Posts'], 0);
+            document.getElementById('group-a-count-rr').textContent = groupCounts['A'] || 0;
+            document.getElementById('group-a-posts-rr').textContent = groupAPosts.toLocaleString();
+            
+            // Group B
+            const groupBData = filteredData.filter(d => d.Group === 'B');
+            const groupBPosts = groupBData.reduce((sum, item) => sum + item['DR Posts'], 0);
+            document.getElementById('group-b-count-rr').textContent = groupCounts['B'] || 0;
+            document.getElementById('group-b-posts-rr').textContent = groupBPosts.toLocaleString();
+            
+            // Group B (NG)
+            document.getElementById('group-b-ng-count-rr').textContent = 0;
+            document.getElementById('group-b-ng-posts-rr').textContent = '0';
+            
+            // Group C
+            const groupCData = filteredData.filter(d => d.Group === 'C');
+            const groupCPosts = groupCData.reduce((sum, item) => sum + item['DR Posts'], 0);
+            document.getElementById('group-c-count-rr').textContent = groupCounts['C'] || 0;
+            document.getElementById('group-c-posts-rr').textContent = groupCPosts.toLocaleString();
+
+            // RR Breakdown Donut Chart
+            const rrBreakdownCounts = countBy(rrQualityData, 'Direct recruitment');
+            if (rrBreakdownChart) rrBreakdownChart.destroy();
+            rrBreakdownChart = new Chart(document.getElementById('rr-breakdown-chart'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(rrBreakdownCounts),
+                    datasets: [{
+                        data: Object.values(rrBreakdownCounts),
+                        backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f39c12'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'bottom',
+                            labels: { padding: 8, font: { size: 10 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // RR Quality Polar Chart (alternative to Venn)
+            const qualityCounts = {
+                'Is Legible': rrQualityData.filter(d => d['Is legible'] === 'YES').length,
+                'Is Specific': rrQualityData.filter(d => d['Is Specific'] === 'YES').length,
+                'Is Complete': rrQualityData.filter(d => d['Is Complete'] === 'YES').length
+            };
+            if (rrQualityChart) rrQualityChart.destroy();
+            rrQualityChart = new Chart(document.getElementById('rr-quality-chart'), {
+                type: 'polarArea',
+                data: {
+                    labels: Object.keys(qualityCounts),
+                    datasets: [{
+                        data: Object.values(qualityCounts),
+                        backgroundColor: ['#3498db80', '#e74c3c80', '#2ecc7180'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'bottom',
+                            labels: { padding: 8, font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+
+            // RR Year Bar Chart
+            const yearCounts = countBy(rrQualityData, 'Decade');
+            if (rrYearChart) rrYearChart.destroy();
+            rrYearChart = new Chart(document.getElementById('rr-year-chart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(yearCounts),
+                    datasets: [{
+                        label: 'Count',
+                        data: Object.values(yearCounts),
+                        backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6'],
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'end'
+                        }
+                    },
+                    scales: {
+                        x: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Revision Summary
+            const revisionCounts = countBy(filteredData, 'Bucketing');
+            document.getElementById('no-change-count').textContent = revisionCounts['No Recruitment Rule Change'] || 0;
+            document.getElementById('change-count').textContent = revisionCounts['Recruitment Rule Change'] || 0;
+
+            // Table
+            const tableBody = document.querySelector('#rr-table tbody');
+            tableBody.innerHTML = filteredData.map(row => `
+                <tr>
+                    <td>${row.Department}</td>
+                    <td>${row.Establishment}</td>
+                    <td>${row['Cadre Name']}</td>
+                    <td>${row.Group}</td>
+                    <td>${row['Pay Scale']}</td>
+                    <td>${row.Education}</td>
+                    <td>${row.Experience}</td>
+                    <td>${row['What change in RR']}</td>
+                    <td>${row.Bucketing}</td>
+                </tr>
+            `).join('');
+        }
+
+        function applyRrFilters() {
+            const dept = document.getElementById('dept-filter-rr').value;
+            const est = document.getElementById('est-filter-rr').value;
+            const filtered = cadreData.filter(item => {
+                return (!dept || item.Department === dept) && (!est || item.Establishment === est);
+            });
+            updateRrDashboard(filtered);
+        }
+
+        // Initialize
+        populateFiltersCadre();
+        updateCadreDashboard(cadreData);
+        document.getElementById('dept-filter-cadre').addEventListener('change', applyCadreFilters);
+        document.getElementById('est-filter-cadre').addEventListener('change', applyCadreFilters);
+        document.getElementById('clear-filter-cadre').addEventListener('click', () => {
+            document.getElementById('dept-filter-cadre').value = "";
+            document.getElementById('est-filter-cadre').value = "";
+            applyCadreFilters();
+        });
+
+        populateFiltersRr();
+        updateRrDashboard(cadreData);
+        document.getElementById('dept-filter-rr').addEventListener('change', applyRrFilters);
+        document.getElementById('est-filter-rr').addEventListener('change', applyRrFilters);
+        document.getElementById('clear-filter-rr').addEventListener('click', () => {
+            document.getElementById('dept-filter-rr').value = "";
+            document.getElementById('est-filter-rr').value = "";
+            applyRrFilters();
+        });
+    </script>
+</body>
+</html>	

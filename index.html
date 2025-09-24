@@ -547,6 +547,7 @@
         <div class="filters">
             <select id="dept-filter-cadre"></select>
             <select id="est-filter-cadre"></select>
+            <select id="category-filter-cadre"></select>
             <button id="clear-filter-cadre">Clear Filters</button>
         </div>
         
@@ -608,6 +609,7 @@
         <div class="filters">
             <select id="dept-filter-rr"></select>
             <select id="est-filter-rr"></select>
+            <select id="category-filter-rr"></select>
             <button id="clear-filter-rr">Clear Filters</button>
         </div>
         
@@ -746,19 +748,25 @@
         function populateFiltersCadre() {
             const departments = getUniqueValues(cadreData, 'Department');
             const establishments = getUniqueValues(cadreData, 'Establishment');
+            const categories = getUniqueValues(cadreData, 'Proposed combined');
             document.getElementById('dept-filter-cadre').innerHTML = '<option value="">All Departments</option>' + 
                 departments.map(d => `<option value="${d}">${d}</option>`).join('');
             document.getElementById('est-filter-cadre').innerHTML = '<option value="">All Establishments</option>' + 
                 establishments.map(e => `<option value="${e}">${e}</option>`).join('');
+            document.getElementById('category-filter-cadre').innerHTML = '<option value="">All Categories</option>' + 
+                categories.map(c => `<option value="${c}">${c}</option>`).join('');
         }
 
         function populateFiltersRr() {
             const departments = getUniqueValues(cadreData, 'Department');
             const establishments = getUniqueValues(cadreData, 'Establishment');
+            const categories = getUniqueValues(cadreData, 'Proposed combined');
             document.getElementById('dept-filter-rr').innerHTML = '<option value="">All Departments</option>' + 
                 departments.map(d => `<option value="${d}">${d}</option>`).join('');
             document.getElementById('est-filter-rr').innerHTML = '<option value="">All Establishments</option>' + 
                 establishments.map(e => `<option value="${e}">${e}</option>`).join('');
+            document.getElementById('category-filter-rr').innerHTML = '<option value="">All Categories</option>' + 
+                categories.map(c => `<option value="${c}">${c}</option>`).join('');
         }
 
         function updateCadreDashboard(filteredData) {
@@ -832,8 +840,11 @@
         function applyCadreFilters() {
             const dept = document.getElementById('dept-filter-cadre').value;
             const est = document.getElementById('est-filter-cadre').value;
+            const category = document.getElementById('category-filter-cadre').value;
             const filtered = cadreData.filter(item => {
-                return (!dept || item.Department === dept) && (!est || item.Establishment === est);
+                return (!dept || item.Department === dept) && 
+                       (!est || item.Establishment === est) && 
+                       (!category || item['Proposed combined'] === category);
             });
             updateCadreDashboard(filtered);
         }
@@ -977,8 +988,11 @@
         function applyRrFilters() {
             const dept = document.getElementById('dept-filter-rr').value;
             const est = document.getElementById('est-filter-rr').value;
+            const category = document.getElementById('category-filter-rr').value;
             const filtered = cadreData.filter(item => {
-                return (!dept || item.Department === dept) && (!est || item.Establishment === est);
+                return (!dept || item.Department === dept) && 
+                       (!est || item.Establishment === est) && 
+                       (!category || item['Proposed combined'] === category);
             });
             updateRrDashboard(filtered);
         }
@@ -988,9 +1002,11 @@
         updateCadreDashboard(cadreData);
         document.getElementById('dept-filter-cadre').addEventListener('change', applyCadreFilters);
         document.getElementById('est-filter-cadre').addEventListener('change', applyCadreFilters);
+        document.getElementById('category-filter-cadre').addEventListener('change', applyCadreFilters);
         document.getElementById('clear-filter-cadre').addEventListener('click', () => {
             document.getElementById('dept-filter-cadre').value = "";
             document.getElementById('est-filter-cadre').value = "";
+            document.getElementById('category-filter-cadre').value = "";
             applyCadreFilters();
         });
 
@@ -998,11 +1014,13 @@
         updateRrDashboard(cadreData);
         document.getElementById('dept-filter-rr').addEventListener('change', applyRrFilters);
         document.getElementById('est-filter-rr').addEventListener('change', applyRrFilters);
+        document.getElementById('category-filter-rr').addEventListener('change', applyRrFilters);
         document.getElementById('clear-filter-rr').addEventListener('click', () => {
             document.getElementById('dept-filter-rr').value = "";
             document.getElementById('est-filter-rr').value = "";
+            document.getElementById('category-filter-rr').value = "";
             applyRrFilters();
         });
     </script>
 </body>
-</html>	
+</html>

@@ -237,6 +237,8 @@
 
         .card.small-card {
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
         .card.small-card h4 {
@@ -245,42 +247,24 @@
             color: #666;
         }
 
-        .card.small-card .group-title {
-            font-size: 1rem;
-            color: var(--text-color);
-            margin-bottom: 0.3rem;
-        }
-
         .card.small-card .cadre-count {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: var(--accent-color);
-            margin: 0.3rem 0;
-        }
-
-        .card.small-card .posts-label {
-            font-size: 0.8rem;
-            color: #888;
-            margin-top: 0.5rem;
-        }
-
-        .card.small-card .posts-count {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #555;
-            margin-top: 0.2rem;
+            margin: 0;
         }
 
         /* Segmented Bar */
         .segmented-bar {
             display: flex;
             width: 100%;
-            height: 45px;
+            height: 50px;
             border-radius: 25px;
-            overflow: hidden;
+            overflow: visible;
             background-color: var(--border-color);
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
             margin-top: 1rem;
+            position: relative;
         }
 
         .segment {
@@ -293,11 +277,14 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
             transition: width 0.5s ease-in-out;
             white-space: nowrap;
-            overflow: hidden;
+            overflow: visible;
+            position: relative;
         }
 
         .segment span {
-            padding: 0 10px;
+            padding: 0 8px;
+            position: relative;
+            z-index: 1;
         }
 
         /* Dashboard Grid for RR Page */
@@ -555,26 +542,18 @@
             <div class="card small-card">
                 <h4>Group A</h4>
                 <div class="cadre-count" id="group-a-count-cadre">0</div>
-                <div class="posts-label">Total Posts</div>
-                <div class="posts-count" id="group-a-posts-cadre">0</div>
             </div>
             <div class="card small-card">
                 <h4>Group B</h4>
                 <div class="cadre-count" id="group-b-count-cadre">0</div>
-                <div class="posts-label">Total Posts</div>
-                <div class="posts-count" id="group-b-posts-cadre">0</div>
             </div>
             <div class="card small-card">
                 <h4>Group B (NG)</h4>
                 <div class="cadre-count" id="group-b-ng-count-cadre">0</div>
-                <div class="posts-label">Total Posts</div>
-                <div class="posts-count" id="group-b-ng-posts-cadre">0</div>
             </div>
             <div class="card small-card">
                 <h4>Group C</h4>
                 <div class="cadre-count" id="group-c-count-cadre">0</div>
-                <div class="posts-label">Total Posts</div>
-                <div class="posts-count" id="group-c-posts-cadre">0</div>
             </div>
         </div>
 
@@ -617,26 +596,18 @@
             <div class="card small-card">
                 <h4>Group A</h4>
                 <div class="cadre-count" id="group-a-count-rr">0</div>
-                <div class="posts-label">Total Posts</div>
-                <div class="posts-count" id="group-a-posts-rr">0</div>
             </div>
             <div class="card small-card">
                 <h4>Group B</h4>
                 <div class="cadre-count" id="group-b-count-rr">0</div>
-                <div class="posts-label">Total Posts</div>
-                <div class="posts-count" id="group-b-posts-rr">0</div>
             </div>
             <div class="card small-card">
                 <h4>Group B (NG)</h4>
                 <div class="cadre-count" id="group-b-ng-count-rr">0</div>
-                <div class="posts-label">Total Posts</div>
-                <div class="posts-count" id="group-b-ng-posts-rr">0</div>
             </div>
             <div class="card small-card">
                 <h4>Group C</h4>
                 <div class="cadre-count" id="group-c-count-rr">0</div>
-                <div class="posts-label">Total Posts</div>
-                <div class="posts-count" id="group-c-posts-rr">0</div>
             </div>
         </div>
 
@@ -696,33 +667,111 @@
     </main>
 
     <script>
-        const cadreData = [
-            { "S.no": 1, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "A", "Cadre Name": "MAS Group-A (Dy Director)", "DR Posts": 143, "Vacant Posts (DR)": 69, "Broad Cadre Bucketing": "Technical", "Domain Specific Cadre Bucketing": "Agriculture and Allied", "Proposed combined": "Already in MPSC Combined", "Pay Scale": "S20 (56100 - 177500)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "No", "What change in RR": "No changes in RR", "Bucketing": "No Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" },
-            { "S.no": 2, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "B", "Cadre Name": "M.A.S. Gr-B (Jr.) Gazzeted (Agriculture Officer)", "DR Posts": 882, "Vacant Posts (DR)": 298, "Broad Cadre Bucketing": "Technical", "Domain Specific Cadre Bucketing": "Agriculture and Allied", "Proposed combined": "Already in MPSC Combined", "Pay Scale": "S15 (41800 - 132300)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "No", "What change in RR": "No changes in RR", "Bucketing": "No Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" },
-            { "S.no": 3, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "B", "Cadre Name": "MAS Group-B (Technical Officer)", "DR Posts": 475, "Vacant Posts (DR)": 124, "Broad Cadre Bucketing": "Technical", "Domain Specific Cadre Bucketing": "Agriculture and Allied", "Proposed combined": "Already in MPSC Combined", "Pay Scale": "S16 (44900 - 142400)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "No", "What change in RR": "No changes in RR", "Bucketing": "No Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" },
-            { "S.no": 4, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Assistant Superintendent", "DR Posts": 100, "Vacant Posts (DR)": 42, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Junior Admin (General) JA(Gen) Combined", "Pay Scale": "S13 (35400 - 112400)", "Degree": "Bachelor's", "Exp": 3, "Need changes in RR": "Yes", "What change in RR": "Experience", "Bucketing": "Recruitment Rule Change", "Education": "Bachelor's", "Experience": "3" },
-            { "S.no": 5, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Stenographer (Lower Grade)", "DR Posts": 36, "Vacant Posts (DR)": 36, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Junior Admin (General) JA(Gen) Combined", "Pay Scale": "S14 (38600 - 122800)", "Degree": "HSC/SSC", "Exp": 0, "Need changes in RR": "Yes", "What change in RR": "Skill Qualification/ Test", "Bucketing": "Recruitment Rule Change", "Education": "HSC/SSC", "Experience": "0" },
-            { "S.no": 6, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Stenographer (Higher Grade)", "DR Posts": 9, "Vacant Posts (DR)": 5, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Junior Admin (General) JA(Gen) Combined", "Pay Scale": "S15 (41800 - 132300)", "Degree": "HSC/SSC", "Exp": 0, "Need changes in RR": "Yes", "What change in RR": "Skill Qualification/ Test", "Bucketing": "Recruitment Rule Change", "Education": "HSC/SSC", "Experience": "0" },
-            { "S.no": 7, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Junior Clerk", "DR Posts": 1191, "Vacant Posts (DR)": 637, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Non-gazetted Admin Staff", "Pay Scale": "S6 (19900 - 63200)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "Yes", "What change in RR": "Skill Test", "Bucketing": "Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" },
-            { "S.no": 8, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Senior Clerk", "DR Posts": 220, "Vacant Posts (DR)": 75, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Non-gazetted Admin Staff", "Pay Scale": "S8 (25500 - 81100)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "No", "What change in RR": "No changes in RR", "Bucketing": "No Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" },
-            { "S.no": 9, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Steno Typist", "DR Posts": 37, "Vacant Posts (DR)": 35, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Non-gazetted Admin Staff", "Pay Scale": "S8 (25500 - 81100)", "Degree": "HSC/SSC", "Exp": 0, "Need changes in RR": "Yes", "What change in RR": "Skill Qualification/ Test", "Bucketing": "Recruitment Rule Change", "Education": "HSC/SSC", "Experience": "0" },
-            { "S.no": 10, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Assistant Agriculture Officer", "DR Posts": 10439, "Vacant Posts (DR)": 1316, "Broad Cadre Bucketing": "Technical", "Domain Specific Cadre Bucketing": "Agriculture and Allied", "Proposed combined": "Non-gazetted Technical Staff", "Pay Scale": "S8 (25500 - 81100)", "Degree": "Diploma", "Exp": 0, "Need changes in RR": "No", "What change in RR": "No changes in RR", "Bucketing": "No Recruitment Rule Change", "Education": "Diploma", "Experience": "0" },
-            { "S.no": 11, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "A", "Cadre Name": "Administrative Service Gr-A Administrative Officer", "DR Posts": 5, "Vacant Posts (DR)": 2, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Senior Admin (General) SA(Gen) Combined", "Pay Scale": "S18 (49100 - 155800)", "Degree": "Bachelor's", "Exp": 5, "Need changes in RR": "Yes", "What change in RR": "Experience", "Bucketing": "Recruitment Rule Change", "Education": "Bachelor's", "Experience": "5" },
-            { "S.no": 12, "Establishment": "Agriculture", "Department": "Agriculture & Allied", "Group": "B", "Cadre Name": "Administrative Service Gr-B Asst. Administrative Officer", "DR Posts": 22, "Vacant Posts (DR)": 22, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Senior Admin (General) SA(Gen) Combined", "Pay Scale": "S15 (41800 - 132300)", "Degree": "Bachelor's", "Exp": 3, "Need changes in RR": "Yes", "What change in RR": "Experience", "Bucketing": "Recruitment Rule Change", "Education": "Bachelor's", "Experience": "3" },
-            { "S.no": 13, "Establishment": "Animal Husbandry", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Steno (Lower)", "DR Posts": 4, "Vacant Posts (DR)": 0, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Junior Admin (General) JA(Gen) Combined", "Pay Scale": "S14 (38600 - 122800)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "Yes", "What change in RR": "Education Qualification and Skill Qualification/ Test", "Bucketing": "Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" },
-            { "S.no": 14, "Establishment": "Animal Husbandry", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Steno (Higher)", "DR Posts": 2, "Vacant Posts (DR)": 0, "Broad Cadre Bucketing": "Administration", "Domain Specific Cadre Bucketing": "General", "Proposed combined": "Junior Admin (General) JA(Gen) Combined", "Pay Scale": "S15 (41800 - 132300)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "Yes", "What change in RR": "Skill Qualification/ Test", "Bucketing": "Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" },
-            { "S.no": 15, "Establishment": "Animal Husbandry", "Department": "Agriculture & Allied", "Group": "C", "Cadre Name": "Statistical Investigator", "DR Posts": 4, "Vacant Posts (DR)": 3, "Broad Cadre Bucketing": "Technical", "Domain Specific Cadre Bucketing": "Mathematics / Statistical", "Proposed combined": "Junior Technical (Mathematics / Statistics) JT(MS) Combined", "Pay Scale": "S14 (38600 - 122800)", "Degree": "Bachelor's", "Exp": 0, "Need changes in RR": "No", "What change in RR": "No changes in RR", "Bucketing": "No Recruitment Rule Change", "Education": "Bachelor's", "Experience": "0" }
-        ];
+        // Global variables to store loaded data
+        let cadreData = [];
+        let rrQualityData = [];
 
-        const rrQualityData = [
-            { "Dept": "Agriculture & Allied", "Decade": "2011 - 2020", "Direct recruitment": "Promotion/Deputation", "Is legible": "NO", "Is Specific": "NO", "Is Complete": "YES" },
-            { "Dept": "Agriculture & Allied", "Decade": "2011 - 2020", "Direct recruitment": "Direct Recruitment", "Is legible": "NO", "Is Specific": "NO", "Is Complete": "YES" },
-            { "Dept": "Agriculture & Allied", "Decade": "Before 2000", "Direct recruitment": "Group D", "Is legible": "NO", "Is Specific": "NO", "Is Complete": "NO" },
-            { "Dept": "Agriculture & Allied", "Decade": "2011 - 2020", "Direct recruitment": "Dead Cadre", "Is legible": "NO", "Is Specific": "NO", "Is Complete": "NO" },
-            { "Dept": "Agriculture & Allied", "Decade": "2011 - 2020", "Direct recruitment": "Promotion/Deputation", "Is legible": "YES", "Is Specific": "NO", "Is Complete": "" },
-            { "Dept": "Agriculture & Allied", "Decade": "No Date on RR", "Direct recruitment": "Direct Recruitment", "Is legible": "NO", "Is Specific": "NO", "Is Complete": "NO" },
-            { "Dept": "Agriculture & Allied", "Decade": "2021 and above", "Direct recruitment": "Direct Recruitment", "Is legible": "YES", "Is Specific": "YES", "Is Complete": "YES" }
-        ];
+        // Function to load JSON data
+        async function loadData() {
+            try {
+                // Show loading message
+                showLoadingMessage();
+                
+                // Load both JSON files simultaneously
+                const [cadreResponse, rrResponse] = await Promise.all([
+                    fetch('cadreData.json'),
+                    fetch('rrQualityData.json')
+                ]);
+
+                // Check if responses are okay
+                if (!cadreResponse.ok) {
+                    throw new Error(`Failed to load cadreData.json: ${cadreResponse.status}`);
+                }
+                if (!rrResponse.ok) {
+                    throw new Error(`Failed to load rrQualityData.json: ${rrResponse.status}`);
+                }
+
+                // Parse JSON data
+                cadreData = await cadreResponse.json();
+                rrQualityData = await rrResponse.json();
+
+                // Hide loading message
+                hideLoadingMessage();
+                
+                console.log('Data loaded successfully:', {
+                    cadreRecords: cadreData.length,
+                    rrQualityRecords: rrQualityData.length
+                });
+
+                // Initialize the dashboard after data is loaded
+                initializeDashboard();
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showErrorMessage('Failed to load data. Please check that cadreData.json and rrQualityData.json files are available.');
+            }
+        }
+
+        // Function to show loading message
+        function showLoadingMessage() {
+            document.body.style.opacity = '0.7';
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loading-message';
+            loadingDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 2rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 10000;
+                text-align: center;
+                font-size: 1.2rem;
+            `;
+            loadingDiv.innerHTML = `
+                <div style="margin-bottom: 1rem;">Loading Dashboard Data...</div>
+                <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                <style>
+                    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                </style>
+            `;
+            document.body.appendChild(loadingDiv);
+        }
+
+        // Function to hide loading message
+        function hideLoadingMessage() {
+            document.body.style.opacity = '1';
+            const loadingDiv = document.getElementById('loading-message');
+            if (loadingDiv) {
+                loadingDiv.remove();
+            }
+        }
+
+        // Function to show error message
+        function showErrorMessage(message) {
+            hideLoadingMessage();
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #e74c3c;
+                color: white;
+                padding: 1rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 10000;
+                max-width: 400px;
+            `;
+            errorDiv.innerHTML = `
+                <strong>Error:</strong> ${message}
+                <br><br>
+                <button onclick="this.parentElement.remove()" style="background: white; color: #e74c3c; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Close</button>
+            `;
+            document.body.appendChild(errorDiv);
+        }
 
         let rrBreakdownChart, rrQualityChart, rrYearChart;
 
@@ -747,52 +796,70 @@
 
         function populateFiltersCadre() {
             const departments = getUniqueValues(cadreData, 'Department');
-            const establishments = getUniqueValues(cadreData, 'Establishment');
             const categories = getUniqueValues(cadreData, 'Proposed combined');
+            
             document.getElementById('dept-filter-cadre').innerHTML = '<option value="">All Departments</option>' + 
                 departments.map(d => `<option value="${d}">${d}</option>`).join('');
-            document.getElementById('est-filter-cadre').innerHTML = '<option value="">All Establishments</option>' + 
-                establishments.map(e => `<option value="${e}">${e}</option>`).join('');
+            
+            // Initialize with all establishments
+            populateEstablishmentsCadre('');
+            
             document.getElementById('category-filter-cadre').innerHTML = '<option value="">All Categories</option>' + 
                 categories.map(c => `<option value="${c}">${c}</option>`).join('');
         }
 
+        function populateEstablishmentsCadre(selectedDepartment) {
+            let establishments;
+            if (selectedDepartment) {
+                establishments = getUniqueValues(
+                    cadreData.filter(d => d.Department === selectedDepartment), 
+                    'Establishment'
+                );
+            } else {
+                establishments = getUniqueValues(cadreData, 'Establishment');
+            }
+            
+            document.getElementById('est-filter-cadre').innerHTML = '<option value="">All Establishments</option>' + 
+                establishments.map(e => `<option value="${e}">${e}</option>`).join('');
+        }
+
         function populateFiltersRr() {
             const departments = getUniqueValues(cadreData, 'Department');
-            const establishments = getUniqueValues(cadreData, 'Establishment');
             const categories = getUniqueValues(cadreData, 'Proposed combined');
+            
             document.getElementById('dept-filter-rr').innerHTML = '<option value="">All Departments</option>' + 
                 departments.map(d => `<option value="${d}">${d}</option>`).join('');
-            document.getElementById('est-filter-rr').innerHTML = '<option value="">All Establishments</option>' + 
-                establishments.map(e => `<option value="${e}">${e}</option>`).join('');
+            
+            // Initialize with all establishments
+            populateEstablishmentsRr('');
+            
             document.getElementById('category-filter-rr').innerHTML = '<option value="">All Categories</option>' + 
                 categories.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+
+        function populateEstablishmentsRr(selectedDepartment) {
+            let establishments;
+            if (selectedDepartment) {
+                establishments = getUniqueValues(
+                    cadreData.filter(d => d.Department === selectedDepartment), 
+                    'Establishment'
+                );
+            } else {
+                establishments = getUniqueValues(cadreData, 'Establishment');
+            }
+            
+            document.getElementById('est-filter-rr').innerHTML = '<option value="">All Establishments</option>' + 
+                establishments.map(e => `<option value="${e}">${e}</option>`).join('');
         }
 
         function updateCadreDashboard(filteredData) {
             const groupCounts = countBy(filteredData, 'Group');
             
-            // Group A
-            const groupAData = filteredData.filter(d => d.Group === 'A');
-            const groupAPosts = groupAData.reduce((sum, item) => sum + item['DR Posts'], 0);
+            // Update group counts only
             document.getElementById('group-a-count-cadre').textContent = groupCounts['A'] || 0;
-            document.getElementById('group-a-posts-cadre').textContent = groupAPosts.toLocaleString();
-            
-            // Group B
-            const groupBData = filteredData.filter(d => d.Group === 'B');
-            const groupBPosts = groupBData.reduce((sum, item) => sum + item['DR Posts'], 0);
             document.getElementById('group-b-count-cadre').textContent = groupCounts['B'] || 0;
-            document.getElementById('group-b-posts-cadre').textContent = groupBPosts.toLocaleString();
-            
-            // Group B (NG)
-            document.getElementById('group-b-ng-count-cadre').textContent = 0;
-            document.getElementById('group-b-ng-posts-cadre').textContent = '0';
-            
-            // Group C
-            const groupCData = filteredData.filter(d => d.Group === 'C');
-            const groupCPosts = groupCData.reduce((sum, item) => sum + item['DR Posts'], 0);
+            document.getElementById('group-b-ng-count-cadre').textContent = groupCounts['B(NG)'] || 0;
             document.getElementById('group-c-count-cadre').textContent = groupCounts['C'] || 0;
-            document.getElementById('group-c-posts-cadre').textContent = groupCPosts.toLocaleString();
 
             const functionalCounts = countBy(filteredData, 'Broad Cadre Bucketing');
             const totalFunctional = filteredData.length;
@@ -800,14 +867,15 @@
 
             const categoryColors = {
                 'Administration': 'linear-gradient(to right, #6a5acd, #8a7de0)',
-                'Technical': 'linear-gradient(to right, #20a4f3, #53c3f3)'
+                'Technical': 'linear-gradient(to right, #20a4f3, #53c3f3)',
+                'Development': 'linear-gradient(to right, #e74c3c, #f1948a)'
             };
 
             let segmentsHTML = '';
             for (const key in functionalCounts) {
                 const count = functionalCounts[key];
                 const percentage = totalFunctional > 0 ? (count / totalFunctional) * 100 : 0;
-                const color = categoryColors[key] || 'gray';
+                const color = categoryColors[key] || 'linear-gradient(to right, #95a5a6, #bdc3c7)';
                 if (percentage > 0) {
                     segmentsHTML += `
                         <div class="segment" 
@@ -849,30 +917,21 @@
             updateCadreDashboard(filtered);
         }
 
+        function onDepartmentChangeCadre() {
+            const selectedDept = document.getElementById('dept-filter-cadre').value;
+            populateEstablishmentsCadre(selectedDept);
+            document.getElementById('est-filter-cadre').value = ''; // Reset establishment selection
+            applyCadreFilters();
+        }
+
         function updateRrDashboard(filteredData) {
             const groupCounts = countBy(filteredData, 'Group');
             
-            // Group A
-            const groupAData = filteredData.filter(d => d.Group === 'A');
-            const groupAPosts = groupAData.reduce((sum, item) => sum + item['DR Posts'], 0);
+            // Update group counts only
             document.getElementById('group-a-count-rr').textContent = groupCounts['A'] || 0;
-            document.getElementById('group-a-posts-rr').textContent = groupAPosts.toLocaleString();
-            
-            // Group B
-            const groupBData = filteredData.filter(d => d.Group === 'B');
-            const groupBPosts = groupBData.reduce((sum, item) => sum + item['DR Posts'], 0);
             document.getElementById('group-b-count-rr').textContent = groupCounts['B'] || 0;
-            document.getElementById('group-b-posts-rr').textContent = groupBPosts.toLocaleString();
-            
-            // Group B (NG)
-            document.getElementById('group-b-ng-count-rr').textContent = 0;
-            document.getElementById('group-b-ng-posts-rr').textContent = '0';
-            
-            // Group C
-            const groupCData = filteredData.filter(d => d.Group === 'C');
-            const groupCPosts = groupCData.reduce((sum, item) => sum + item['DR Posts'], 0);
+            document.getElementById('group-b-ng-count-rr').textContent = groupCounts['B(NG)'] || 0;
             document.getElementById('group-c-count-rr').textContent = groupCounts['C'] || 0;
-            document.getElementById('group-c-posts-rr').textContent = groupCPosts.toLocaleString();
 
             // RR Breakdown Donut Chart
             const rrBreakdownCounts = countBy(rrQualityData, 'Direct recruitment');
@@ -905,33 +964,33 @@
                 }
             });
 
-            // RR Quality Polar Chart (alternative to Venn)
-            const qualityCounts = {
-                'Is Legible': rrQualityData.filter(d => d['Is legible'] === 'YES').length,
-                'Is Specific': rrQualityData.filter(d => d['Is Specific'] === 'YES').length,
-                'Is Complete': rrQualityData.filter(d => d['Is Complete'] === 'YES').length
-            };
-            if (rrQualityChart) rrQualityChart.destroy();
-            rrQualityChart = new Chart(document.getElementById('rr-quality-chart'), {
-                type: 'polarArea',
-                data: {
-                    labels: Object.keys(qualityCounts),
-                    datasets: [{
-                        data: Object.values(qualityCounts),
-                        backgroundColor: ['#3498db80', '#e74c3c80', '#2ecc7180'],
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { 
-                            position: 'bottom',
-                            labels: { padding: 8, font: { size: 10 } }
-                        }
-                    }
-                }
-            });
+            // RR Quality Polar Chart - Absolute YES counts
+const qualityCounts = {
+    'Is Legible': rrQualityData.filter(d => d['Is legible'] === 'YES').length,
+    'Is Specific': rrQualityData.filter(d => d['Is Specific'] === 'YES').length,
+    'Is Complete': rrQualityData.filter(d => d['Is Complete'] === 'YES').length
+};
+if (rrQualityChart) rrQualityChart.destroy();
+rrQualityChart = new Chart(document.getElementById('rr-quality-chart'), {
+    type: 'polarArea',
+    data: {
+        labels: Object.keys(qualityCounts),
+        datasets: [{
+            data: Object.values(qualityCounts),
+            backgroundColor: ['#3498db80', '#e74c3c80', '#2ecc7180'],
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { 
+                position: 'bottom',
+                labels: { padding: 8, font: { size: 10 } }
+            }
+        }
+    }
+});
 
             // RR Year Bar Chart
             const yearCounts = countBy(rrQualityData, 'Decade');
@@ -997,29 +1056,70 @@
             updateRrDashboard(filtered);
         }
 
-        // Initialize
-        populateFiltersCadre();
-        updateCadreDashboard(cadreData);
-        document.getElementById('dept-filter-cadre').addEventListener('change', applyCadreFilters);
-        document.getElementById('est-filter-cadre').addEventListener('change', applyCadreFilters);
-        document.getElementById('category-filter-cadre').addEventListener('change', applyCadreFilters);
-        document.getElementById('clear-filter-cadre').addEventListener('click', () => {
-            document.getElementById('dept-filter-cadre').value = "";
-            document.getElementById('est-filter-cadre').value = "";
-            document.getElementById('category-filter-cadre').value = "";
-            applyCadreFilters();
-        });
-
-        populateFiltersRr();
-        updateRrDashboard(cadreData);
-        document.getElementById('dept-filter-rr').addEventListener('change', applyRrFilters);
-        document.getElementById('est-filter-rr').addEventListener('change', applyRrFilters);
-        document.getElementById('category-filter-rr').addEventListener('change', applyRrFilters);
-        document.getElementById('clear-filter-rr').addEventListener('click', () => {
-            document.getElementById('dept-filter-rr').value = "";
-            document.getElementById('est-filter-rr').value = "";
-            document.getElementById('category-filter-rr').value = "";
+        function onDepartmentChangeRr() {
+            const selectedDept = document.getElementById('dept-filter-rr').value;
+            populateEstablishmentsRr(selectedDept);
+            document.getElementById('est-filter-rr').value = ''; // Reset establishment selection
             applyRrFilters();
+        }
+
+        // Function to initialize dashboard after data is loaded
+        function initializeDashboard() {
+            // Populate filters
+            populateFiltersCadre();
+            populateFiltersRr();
+            
+            // Initialize dashboard displays
+            updateCadreDashboard(cadreData);
+            updateRrDashboard(cadreData);
+            
+            // Add event listeners for cadre page
+            document.getElementById('dept-filter-cadre').addEventListener('change', onDepartmentChangeCadre);
+            document.getElementById('est-filter-cadre').addEventListener('change', applyCadreFilters);
+            document.getElementById('category-filter-cadre').addEventListener('change', applyCadreFilters);
+            document.getElementById('clear-filter-cadre').addEventListener('click', () => {
+                document.getElementById('dept-filter-cadre').value = "";
+                document.getElementById('est-filter-cadre').value = "";
+                document.getElementById('category-filter-cadre').value = "";
+                populateEstablishmentsCadre(''); // Reset establishments to all
+                applyCadreFilters();
+            });
+
+            // Add event listeners for RR page
+            document.getElementById('dept-filter-rr').addEventListener('change', onDepartmentChangeRr);
+            document.getElementById('est-filter-rr').addEventListener('change', applyRrFilters);
+            document.getElementById('category-filter-rr').addEventListener('change', applyRrFilters);
+            document.getElementById('clear-filter-rr').addEventListener('click', () => {
+                document.getElementById('dept-filter-rr').value = "";
+                document.getElementById('est-filter-rr').value = "";
+                document.getElementById('category-filter-rr').value = "";
+                populateEstablishmentsRr(''); // Reset establishments to all
+                applyRrFilters();
+            });
+        }
+
+        // Initialize navigation (this can happen before data loading)
+        function initializeNavigation() {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageId = link.getAttribute('data-page');
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    document.querySelectorAll('.page-content').forEach(page => {
+                        page.classList.toggle('hidden', page.id !== pageId);
+                    });
+                });
+            });
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize navigation immediately
+            initializeNavigation();
+            
+            // Load data and initialize dashboard
+            await loadData();
         });
     </script>
 </body>

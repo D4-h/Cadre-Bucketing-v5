@@ -16,6 +16,11 @@
             --warning-color: #f39c12;
             --border-color: #e0e0e0;
             --shadow: 0 4px 8px rgba(0,0,0,0.05);
+            
+            /* Corporate blue color family for functional cards */
+            --blue-dark: #1e3a5f;
+            --blue-medium: #2c5282;
+            --blue-light: #4a7ba7;
         }
 
         body {
@@ -239,6 +244,18 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .card.small-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .card.small-card.selected {
+            border: 2px solid var(--accent-color);
+            background-color: #f0f8ff;
         }
 
         .card.small-card h4 {
@@ -253,38 +270,90 @@
             color: var(--accent-color);
             margin: 0;
         }
-
-        /* Segmented Bar */
-        .segmented-bar {
-            display: flex;
-            width: 100%;
-            height: 50px;
-            border-radius: 25px;
-            overflow: visible;
-            background-color: var(--border-color);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-            margin-top: 1rem;
-            position: relative;
+        
+        .card.small-card .post-count {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.3rem;
         }
 
-        .segment {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+        /* Functional cards with corporate blue theme */
+        .functional-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .functional-card {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .functional-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .functional-card.selected {
+            border: 2px solid var(--accent-color);
+        }
+        
+        .functional-card.administration {
+            background: linear-gradient(135deg, #E6ECF6 10%, #3B5998 100%);
+            border-left: 4px solid var(--blue-dark);
+        }
+        
+        .functional-card.technical {
+            background: linear-gradient(135deg, #EAF7F4 10%, #2F8F83 100%);
+            border-left: 4px solid var(--blue-medium);
+        }
+        
+        .functional-card.development {
+            background: linear-gradient(135deg, #EDE8F9 10%, #4338CA 100%);
+            border-left: 4px solid var(--blue-light);
+        }
+        
+        .functional-card h4 {
+            font-size: 1rem;
+            margin: 0 0 0.5rem 0;
+            color: #333;
+        }
+        
+        .functional-card .count {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .functional-card.administration .count {
+            color: var(--blue-dark);
+        }
+        
+        .functional-card.technical .count {
+            color: var(--blue-medium);
+        }
+        
+        .functional-card.development .count {
+            color: var(--blue-light);
+        }
+
+        /* Section Headers */
+        .section-header {
+            font-size: 1.5rem;
             font-weight: 600;
-            font-size: 0.9em;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-            transition: width 0.5s ease-in-out;
-            white-space: nowrap;
-            overflow: visible;
-            position: relative;
-        }
-
-        .segment span {
-            padding: 0 8px;
-            position: relative;
-            z-index: 1;
+            color: var(--header-bg);
+            margin: 2rem 0 1.5rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-color);
         }
 
         /* Dashboard Grid for RR Page */
@@ -309,6 +378,18 @@
             box-shadow: var(--shadow);
             border-left: 4px solid var(--success-color);
             text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .revision-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .revision-card.selected {
+            border: 2px solid var(--accent-color);
+            background-color: #f0f8ff;
         }
 
         .revision-card.change {
@@ -335,6 +416,22 @@
             position: relative;
             height: 250px;
             margin-top: 1rem;
+        }
+        
+        .chart-card {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .chart-card h3 {
+            font-size: 1rem;
+            color: var(--header-bg);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
         }
 
         /* Table Styles */
@@ -539,27 +636,41 @@
         </div>
         
         <div class="card-group-container">
-            <div class="card small-card">
+            <div class="card small-card group-card" data-group="A">
                 <h4>Group A</h4>
                 <div class="cadre-count" id="group-a-count-cadre">0</div>
+                <div class="post-count" id="group-a-posts-cadre">Total Posts: 0</div>
             </div>
-            <div class="card small-card">
+            <div class="card small-card group-card" data-group="B">
                 <h4>Group B</h4>
                 <div class="cadre-count" id="group-b-count-cadre">0</div>
+                <div class="post-count" id="group-b-posts-cadre">Total Posts: 0</div>
             </div>
-            <div class="card small-card">
+            <div class="card small-card group-card" data-group="B(NG)">
                 <h4>Group B (NG)</h4>
                 <div class="cadre-count" id="group-b-ng-count-cadre">0</div>
+                <div class="post-count" id="group-b-ng-posts-cadre">Total Posts: 0</div>
             </div>
-            <div class="card small-card">
+            <div class="card small-card group-card" data-group="C">
                 <h4>Group C</h4>
                 <div class="cadre-count" id="group-c-count-cadre">0</div>
+                <div class="post-count" id="group-c-posts-cadre">Total Posts: 0</div>
             </div>
         </div>
 
-        <div class="card full-width">
-            <h3>Functional Distribution</h3>
-            <div id="functional-dist-cadre"></div>
+        <div class="functional-cards">
+            <div class="functional-card administration" data-function="Administration">
+                <h4>Administration</h4>
+                <div class="count" id="administration-count">0</div>
+            </div>
+            <div class="functional-card technical" data-function="Technical">
+                <h4>Technical</h4>
+                <div class="count" id="technical-count">0</div>
+            </div>
+            <div class="functional-card development" data-function="Development">
+                <h4>Development</h4>
+                <div class="count" id="development-count">0</div>
+            </div>
         </div>
 
         <div class="card full-width">
@@ -576,6 +687,7 @@
                             <th>Broad Function</th>
                             <th>Domain Specific</th>
                             <th>Proposed Category</th>
+                            <th>DR Posts</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -592,52 +704,60 @@
             <button id="clear-filter-rr">Clear Filters</button>
         </div>
         
-        <div class="card-group-container">
-            <div class="card small-card">
-                <h4>Group A</h4>
-                <div class="cadre-count" id="group-a-count-rr">0</div>
-            </div>
-            <div class="card small-card">
-                <h4>Group B</h4>
-                <div class="cadre-count" id="group-b-count-rr">0</div>
-            </div>
-            <div class="card small-card">
-                <h4>Group B (NG)</h4>
-                <div class="cadre-count" id="group-b-ng-count-rr">0</div>
-            </div>
-            <div class="card small-card">
-                <h4>Group C</h4>
-                <div class="cadre-count" id="group-c-count-rr">0</div>
-            </div>
-        </div>
-
+        <h2 class="section-header">Complete Recruitment Rule Analysis</h2>
+        
         <div class="dashboard-grid">
-            <div class="card">
+            <div class="chart-card">
                 <h3>RR Rules Breakdown</h3>
                 <div class="chart-container">
                     <canvas id="rr-breakdown-chart"></canvas>
                 </div>
             </div>
-            <div class="card">
+            <div class="chart-card">
                 <h3>Analysis of RR Quality</h3>
                 <div class="chart-container">
                     <canvas id="rr-quality-chart"></canvas>
                 </div>
             </div>
-            <div class="card">
-                <h3>RR Creation Year</h3>
+            <div class="chart-card">
+                <h3>RR Issue Year</h3>
                 <div class="chart-container">
                     <canvas id="rr-year-chart"></canvas>
                 </div>
             </div>
         </div>
 
+        <h2 class="section-header">Analysis of Direct Recruitment Rules</h2>
+        
+        <div class="card-group-container">
+            <div class="card small-card group-card-rr" data-group="A">
+                <h4>Group A</h4>
+                <div class="cadre-count" id="group-a-count-rr">0</div>
+                <div class="post-count" id="group-a-posts-rr">Total Posts: 0</div>
+            </div>
+            <div class="card small-card group-card-rr" data-group="B">
+                <h4>Group B</h4>
+                <div class="cadre-count" id="group-b-count-rr">0</div>
+                <div class="post-count" id="group-b-posts-rr">Total Posts: 0</div>
+            </div>
+            <div class="card small-card group-card-rr" data-group="B(NG)">
+                <h4>Group B (NG)</h4>
+                <div class="cadre-count" id="group-b-ng-count-rr">0</div>
+                <div class="post-count" id="group-b-ng-posts-rr">Total Posts: 0</div>
+            </div>
+            <div class="card small-card group-card-rr" data-group="C">
+                <h4>Group C</h4>
+                <div class="cadre-count" id="group-c-count-rr">0</div>
+                <div class="post-count" id="group-c-posts-rr">Total Posts: 0</div>
+            </div>
+        </div>
+
         <div class="revision-cards">
-            <div class="revision-card">
+            <div class="revision-card no-change-card" data-status="No Recruitment Rule Change">
                 <h3>No Recruitment Rule Change</h3>
                 <div class="value" id="no-change-count">0</div>
             </div>
-            <div class="revision-card change">
+            <div class="revision-card change change-card" data-status="Recruitment Rule Change">
                 <h3>Recruitment Rule Change</h3>
                 <div class="value" id="change-count">0</div>
             </div>
@@ -658,6 +778,7 @@
                             <th>Experience</th>
                             <th>Remark</th>
                             <th>Status</th>
+                            <th>DR Posts</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -670,6 +791,10 @@
         // Global variables to store loaded data
         let cadreData = [];
         let rrQualityData = [];
+        let currentFilters = {
+            cadre: { dept: '', est: '', category: '', group: '', functional: '' },
+            rr: { dept: '', est: '', category: '', group: '', status: '' }
+        };
 
         // Function to load JSON data
         async function loadData() {
@@ -780,6 +905,20 @@
             acc[item[key]] = (acc[item[key]] || 0) + 1;
             return acc;
         }, {});
+        
+        const sumBy = (data, key) => data.reduce((acc, item) => {
+            const value = parseFloat(item[key]) || 0;
+            return acc + value;
+        }, 0);
+        
+        const sumByGroup = (data, groupKey, sumKey) => {
+            return data.reduce((acc, item) => {
+                const group = item[groupKey];
+                const value = parseFloat(item[sumKey]) || 0;
+                acc[group] = (acc[group] || 0) + value;
+                return acc;
+            }, {});
+        };
 
         // Navigation
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -796,16 +935,13 @@
 
         function populateFiltersCadre() {
             const departments = getUniqueValues(cadreData, 'Department');
-            const categories = getUniqueValues(cadreData, 'Proposed combined');
             
             document.getElementById('dept-filter-cadre').innerHTML = '<option value="">All Departments</option>' + 
                 departments.map(d => `<option value="${d}">${d}</option>`).join('');
             
-            // Initialize with all establishments
+            // Initialize with all establishments and categories
             populateEstablishmentsCadre('');
-            
-            document.getElementById('category-filter-cadre').innerHTML = '<option value="">All Categories</option>' + 
-                categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            populateCategoriesCadre('', '');
         }
 
         function populateEstablishmentsCadre(selectedDepartment) {
@@ -822,19 +958,33 @@
             document.getElementById('est-filter-cadre').innerHTML = '<option value="">All Establishments</option>' + 
                 establishments.map(e => `<option value="${e}">${e}</option>`).join('');
         }
+        
+        function populateCategoriesCadre(selectedDepartment, selectedEstablishment) {
+            let categories;
+            let filteredData = cadreData;
+            
+            if (selectedDepartment) {
+                filteredData = filteredData.filter(d => d.Department === selectedDepartment);
+            }
+            if (selectedEstablishment) {
+                filteredData = filteredData.filter(d => d.Establishment === selectedEstablishment);
+            }
+            
+            categories = getUniqueValues(filteredData, 'Proposed combined');
+            
+            document.getElementById('category-filter-cadre').innerHTML = '<option value="">All Categories</option>' + 
+                categories.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
 
         function populateFiltersRr() {
             const departments = getUniqueValues(cadreData, 'Department');
-            const categories = getUniqueValues(cadreData, 'Proposed combined');
             
             document.getElementById('dept-filter-rr').innerHTML = '<option value="">All Departments</option>' + 
                 departments.map(d => `<option value="${d}">${d}</option>`).join('');
             
-            // Initialize with all establishments
+            // Initialize with all establishments and categories
             populateEstablishmentsRr('');
-            
-            document.getElementById('category-filter-rr').innerHTML = '<option value="">All Categories</option>' + 
-                categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            populateCategoriesRr('', '');
         }
 
         function populateEstablishmentsRr(selectedDepartment) {
@@ -851,45 +1001,48 @@
             document.getElementById('est-filter-rr').innerHTML = '<option value="">All Establishments</option>' + 
                 establishments.map(e => `<option value="${e}">${e}</option>`).join('');
         }
+        
+        function populateCategoriesRr(selectedDepartment, selectedEstablishment) {
+            let categories;
+            let filteredData = cadreData;
+            
+            if (selectedDepartment) {
+                filteredData = filteredData.filter(d => d.Department === selectedDepartment);
+            }
+            if (selectedEstablishment) {
+                filteredData = filteredData.filter(d => d.Establishment === selectedEstablishment);
+            }
+            
+            categories = getUniqueValues(filteredData, 'Proposed combined');
+            
+            document.getElementById('category-filter-rr').innerHTML = '<option value="">All Categories</option>' + 
+                categories.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
 
         function updateCadreDashboard(filteredData) {
             const groupCounts = countBy(filteredData, 'Group');
+            const groupPosts = sumByGroup(filteredData, 'Group', 'DR Posts');
             
-            // Update group counts only
+            // Update group counts and posts
             document.getElementById('group-a-count-cadre').textContent = groupCounts['A'] || 0;
+            document.getElementById('group-a-posts-cadre').textContent = `Total Posts: ${Math.round(groupPosts['A'] || 0).toLocaleString()}`;
+            
             document.getElementById('group-b-count-cadre').textContent = groupCounts['B'] || 0;
+            document.getElementById('group-b-posts-cadre').textContent = `Total Posts: ${Math.round(groupPosts['B'] || 0).toLocaleString()}`;
+            
             document.getElementById('group-b-ng-count-cadre').textContent = groupCounts['B(NG)'] || 0;
+            document.getElementById('group-b-ng-posts-cadre').textContent = `Total Posts: ${Math.round(groupPosts['B(NG)'] || 0).toLocaleString()}`;
+            
             document.getElementById('group-c-count-cadre').textContent = groupCounts['C'] || 0;
+            document.getElementById('group-c-posts-cadre').textContent = `Total Posts: ${Math.round(groupPosts['C'] || 0).toLocaleString()}`;
 
+            // Update functional counts
             const functionalCounts = countBy(filteredData, 'Broad Cadre Bucketing');
-            const totalFunctional = filteredData.length;
-            const functionalDistContainer = document.getElementById('functional-dist-cadre');
+            document.getElementById('administration-count').textContent = functionalCounts['Administration'] || 0;
+            document.getElementById('technical-count').textContent = functionalCounts['Technical'] || 0;
+            document.getElementById('development-count').textContent = functionalCounts['Development'] || 0;
 
-            const categoryColors = {
-                'Administration': 'linear-gradient(to right, #6a5acd, #8a7de0)',
-                'Technical': 'linear-gradient(to right, #20a4f3, #53c3f3)',
-                'Development': 'linear-gradient(to right, #e74c3c, #f1948a)'
-            };
-
-            let segmentsHTML = '';
-            for (const key in functionalCounts) {
-                const count = functionalCounts[key];
-                const percentage = totalFunctional > 0 ? (count / totalFunctional) * 100 : 0;
-                const color = categoryColors[key] || 'linear-gradient(to right, #95a5a6, #bdc3c7)';
-                if (percentage > 0) {
-                    segmentsHTML += `
-                        <div class="segment" 
-                             style="width: ${percentage}%; background: ${color};" 
-                             title="${key}: ${count} (${percentage.toFixed(1)}%)">
-                            <span>${key} ${count}</span>
-                        </div>`;
-                }
-            }
-
-            functionalDistContainer.innerHTML = totalFunctional === 0 ? 
-                '<p style="text-align: center; color: #888;">No data</p>' : 
-                `<div class="segmented-bar">${segmentsHTML}</div>`;
-
+            // Update table
             const tableBody = document.querySelector('#cadre-table tbody');
             tableBody.innerHTML = filteredData.map(row => `
                 <tr>
@@ -901,48 +1054,95 @@
                     <td>${row['Broad Cadre Bucketing']}</td>
                     <td>${row['Domain Specific Cadre Bucketing']}</td>
                     <td>${row['Proposed combined']}</td>
+                    <td>${Math.round(parseFloat(row['DR Posts']) || 0).toLocaleString()}</td>
                 </tr>
             `).join('');
         }
 
         function applyCadreFilters() {
-            const dept = document.getElementById('dept-filter-cadre').value;
-            const est = document.getElementById('est-filter-cadre').value;
-            const category = document.getElementById('category-filter-cadre').value;
+            const dept = currentFilters.cadre.dept || document.getElementById('dept-filter-cadre').value;
+            const est = currentFilters.cadre.est || document.getElementById('est-filter-cadre').value;
+            const category = currentFilters.cadre.category || document.getElementById('category-filter-cadre').value;
+            const group = currentFilters.cadre.group;
+            const functional = currentFilters.cadre.functional;
+            
             const filtered = cadreData.filter(item => {
                 return (!dept || item.Department === dept) && 
                        (!est || item.Establishment === est) && 
-                       (!category || item['Proposed combined'] === category);
+                       (!category || item['Proposed combined'] === category) &&
+                       (!group || item.Group === group) &&
+                       (!functional || item['Broad Cadre Bucketing'] === functional);
             });
             updateCadreDashboard(filtered);
         }
 
         function onDepartmentChangeCadre() {
             const selectedDept = document.getElementById('dept-filter-cadre').value;
+            currentFilters.cadre.dept = selectedDept;
             populateEstablishmentsCadre(selectedDept);
             document.getElementById('est-filter-cadre').value = ''; // Reset establishment selection
+            currentFilters.cadre.est = '';
+            populateCategoriesCadre(selectedDept, ''); // Update categories based on department
+            document.getElementById('category-filter-cadre').value = ''; // Reset category selection
+            currentFilters.cadre.category = '';
+            applyCadreFilters();
+        }
+        
+        function onEstablishmentChangeCadre() {
+            const selectedDept = document.getElementById('dept-filter-cadre').value;
+            const selectedEst = document.getElementById('est-filter-cadre').value;
+            currentFilters.cadre.est = selectedEst;
+            populateCategoriesCadre(selectedDept, selectedEst); // Update categories based on dept + est
+            document.getElementById('category-filter-cadre').value = ''; // Reset category selection
+            currentFilters.cadre.category = '';
             applyCadreFilters();
         }
 
         function updateRrDashboard(filteredData) {
             const groupCounts = countBy(filteredData, 'Group');
+            const groupPosts = sumByGroup(filteredData, 'Group', 'DR Posts');
             
-            // Update group counts only
+            // Update group counts and posts
             document.getElementById('group-a-count-rr').textContent = groupCounts['A'] || 0;
+            document.getElementById('group-a-posts-rr').textContent = `Total Posts: ${Math.round(groupPosts['A'] || 0).toLocaleString()}`;
+            
             document.getElementById('group-b-count-rr').textContent = groupCounts['B'] || 0;
+            document.getElementById('group-b-posts-rr').textContent = `Total Posts: ${Math.round(groupPosts['B'] || 0).toLocaleString()}`;
+            
             document.getElementById('group-b-ng-count-rr').textContent = groupCounts['B(NG)'] || 0;
+            document.getElementById('group-b-ng-posts-rr').textContent = `Total Posts: ${Math.round(groupPosts['B(NG)'] || 0).toLocaleString()}`;
+            
             document.getElementById('group-c-count-rr').textContent = groupCounts['C'] || 0;
+            document.getElementById('group-c-posts-rr').textContent = `Total Posts: ${Math.round(groupPosts['C'] || 0).toLocaleString()}`;
 
-            // RR Breakdown Donut Chart
-            const rrBreakdownCounts = countBy(rrQualityData, 'Direct recruitment');
+            // RR Breakdown Stacked Chart
+            const rrBreakdownData = countBy(rrQualityData, 'Direct recruitment');
+            const recruitmentCount = rrBreakdownData['Direct Recruitment'] || rrBreakdownData['Recruitment'] || 0;
+            const promotionCount = rrBreakdownData['Promotion/Deputation'] || rrBreakdownData['Promotion'] || 0;
+            const deadCount = rrBreakdownData['Dead Cadre'] || 0;
+            const groupDCount = rrBreakdownData['Group D'] || 0;
+            
             if (rrBreakdownChart) rrBreakdownChart.destroy();
             rrBreakdownChart = new Chart(document.getElementById('rr-breakdown-chart'), {
-                type: 'doughnut',
+                type: 'bar',
                 data: {
-                    labels: Object.keys(rrBreakdownCounts),
+                    labels: ['Recruitment Type', 'Cadre Status'],
                     datasets: [{
-                        data: Object.values(rrBreakdownCounts),
-                        backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f39c12'],
+                        label: 'Direct Recruitment',
+                        data: [recruitmentCount, 0],
+                        backgroundColor: '#2c5282'
+                    }, {
+                        label: 'Promotion/Deputation',
+                        data: [promotionCount, 0],
+                        backgroundColor: '#4a7ba7'
+                    }, {
+                        label: 'Group D Cadre',
+                        data: [0, groupDCount],
+                        backgroundColor: '#718096'
+                    }, {
+                        label: 'Dead Cadre',
+                        data: [0, deadCount],
+                        backgroundColor: '#DC2626'
                     }]
                 },
                 options: {
@@ -950,14 +1150,25 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { 
-                            position: 'bottom',
+                            position: 'top',
                             labels: { padding: 8, font: { size: 10 } }
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return context.label + ': ' + context.parsed;
+                                    return context.dataset.label + ': ' + context.parsed.y;
                                 }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { stacked: true },
+                        y: { 
+                            stacked: true,
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Count'
                             }
                         }
                     }
@@ -965,44 +1176,73 @@
             });
 
             // RR Quality Polar Chart - Absolute YES counts
-const qualityCounts = {
-    'Is Legible': rrQualityData.filter(d => d['Is legible'] === 'YES').length,
-    'Is Specific': rrQualityData.filter(d => d['Is Specific'] === 'YES').length,
-    'Is Complete': rrQualityData.filter(d => d['Is Complete'] === 'YES').length
-};
-if (rrQualityChart) rrQualityChart.destroy();
-rrQualityChart = new Chart(document.getElementById('rr-quality-chart'), {
-    type: 'polarArea',
-    data: {
-        labels: Object.keys(qualityCounts),
-        datasets: [{
-            data: Object.values(qualityCounts),
-            backgroundColor: ['#3498db80', '#e74c3c80', '#2ecc7180'],
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { 
-                position: 'bottom',
-                labels: { padding: 8, font: { size: 10 } }
-            }
-        }
-    }
-});
+            const qualityCounts = {
+                'Not Updated & Readable': rrQualityData.filter(d => d['Is legible'] === 'NO').length,
+                'Eligiblity not Verfiable': rrQualityData.filter(d => d['Is Specific'] === 'NO').length,
+                'Not Standardised': rrQualityData.filter(d => d['Is Complete'] === 'NO').length
+            };
+            if (rrQualityChart) rrQualityChart.destroy();
+            rrQualityChart = new Chart(document.getElementById('rr-quality-chart'), {
+                type: 'polarArea',
+                data: {
+                    labels: Object.keys(qualityCounts),
+                    datasets: [{
+                        data: Object.values(qualityCounts),
+                        backgroundColor: ['#2c528280', '#4a7ba780', '#6b94ba80'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'top',
+                            labels: { padding: 8, font: { size: 10 } }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            ticks: {
+                                display: false
+                            },
+                            grid: {
+                                display: true
+                            }
+                        }
+                    }
+                }
+            });
 
-            // RR Year Bar Chart
-            const yearCounts = countBy(rrQualityData, 'Decade');
+            // RR Year Bar Chart - Filter and map decades
+            const yearData = rrQualityData.filter(d => d['Decade'] && d['Decade'] !== 'No date on RR');
+            const yearMapping = {};
+            
+            yearData.forEach(d => {
+                let category;
+                const decade = d['Decade'];
+                
+                if (decade.includes('1990') || decade.includes('1980') || decade.includes('1970') || decade.includes('1960') || decade === 'Before 2000') {
+                    category = 'Before 2000';
+                } else if (decade === '2011 - 2020') {
+                    category = '2011 - 2020';
+                } else if (decade === '2021 - Current' || decade.includes('2021')) {
+                    category = '2021 - Current';
+                } else {
+                    category = '2011 - 2020'; // Default for 2000-2010
+                }
+                
+                yearMapping[category] = (yearMapping[category] || 0) + 1;
+            });
+            
             if (rrYearChart) rrYearChart.destroy();
             rrYearChart = new Chart(document.getElementById('rr-year-chart'), {
                 type: 'bar',
                 data: {
-                    labels: Object.keys(yearCounts),
+                    labels: Object.keys(yearMapping),
                     datasets: [{
                         label: 'Count',
-                        data: Object.values(yearCounts),
-                        backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6'],
+                        data: Object.values(yearMapping),
+                        backgroundColor: ['#1e3a5f', '#2c5282', '#4a7ba7'],
                     }]
                 },
                 options: {
@@ -1010,11 +1250,7 @@ rrQualityChart = new Chart(document.getElementById('rr-quality-chart'), {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false },
-                        datalabels: {
-                            anchor: 'end',
-                            align: 'end'
-                        }
+                        legend: { display: false }
                     },
                     scales: {
                         x: { beginAtZero: true }
@@ -1040,26 +1276,47 @@ rrQualityChart = new Chart(document.getElementById('rr-quality-chart'), {
                     <td>${row.Exp}</td>
                     <td>${row['What change in RR']}</td>
                     <td>${row.Bucketing}</td>
+                    <td>${Math.round(parseFloat(row['DR Posts']) || 0).toLocaleString()}</td>
                 </tr>
             `).join('');
         }
 
         function applyRrFilters() {
-            const dept = document.getElementById('dept-filter-rr').value;
-            const est = document.getElementById('est-filter-rr').value;
-            const category = document.getElementById('category-filter-rr').value;
+            const dept = currentFilters.rr.dept || document.getElementById('dept-filter-rr').value;
+            const est = currentFilters.rr.est || document.getElementById('est-filter-rr').value;
+            const category = currentFilters.rr.category || document.getElementById('category-filter-rr').value;
+            const group = currentFilters.rr.group;
+            const status = currentFilters.rr.status;
+            
             const filtered = cadreData.filter(item => {
                 return (!dept || item.Department === dept) && 
                        (!est || item.Establishment === est) && 
-                       (!category || item['Proposed combined'] === category);
+                       (!category || item['Proposed combined'] === category) &&
+                       (!group || item.Group === group) &&
+                       (!status || item.Bucketing === status);
             });
             updateRrDashboard(filtered);
         }
 
         function onDepartmentChangeRr() {
             const selectedDept = document.getElementById('dept-filter-rr').value;
+            currentFilters.rr.dept = selectedDept;
             populateEstablishmentsRr(selectedDept);
             document.getElementById('est-filter-rr').value = ''; // Reset establishment selection
+            currentFilters.rr.est = '';
+            populateCategoriesRr(selectedDept, ''); // Update categories based on department
+            document.getElementById('category-filter-rr').value = ''; // Reset category selection
+            currentFilters.rr.category = '';
+            applyRrFilters();
+        }
+        
+        function onEstablishmentChangeRr() {
+            const selectedDept = document.getElementById('dept-filter-rr').value;
+            const selectedEst = document.getElementById('est-filter-rr').value;
+            currentFilters.rr.est = selectedEst;
+            populateCategoriesRr(selectedDept, selectedEst); // Update categories based on dept + est
+            document.getElementById('category-filter-rr').value = ''; // Reset category selection
+            currentFilters.rr.category = '';
             applyRrFilters();
         }
 
@@ -1073,28 +1330,112 @@ rrQualityChart = new Chart(document.getElementById('rr-quality-chart'), {
             updateCadreDashboard(cadreData);
             updateRrDashboard(cadreData);
             
-            // Add event listeners for cadre page
+            // Add event listeners for cadre page filters
             document.getElementById('dept-filter-cadre').addEventListener('change', onDepartmentChangeCadre);
-            document.getElementById('est-filter-cadre').addEventListener('change', applyCadreFilters);
-            document.getElementById('category-filter-cadre').addEventListener('change', applyCadreFilters);
+            document.getElementById('est-filter-cadre').addEventListener('change', onEstablishmentChangeCadre);
+            document.getElementById('category-filter-cadre').addEventListener('change', () => {
+                currentFilters.cadre.category = document.getElementById('category-filter-cadre').value;
+                applyCadreFilters();
+            });
             document.getElementById('clear-filter-cadre').addEventListener('click', () => {
                 document.getElementById('dept-filter-cadre').value = "";
                 document.getElementById('est-filter-cadre').value = "";
                 document.getElementById('category-filter-cadre').value = "";
                 populateEstablishmentsCadre(''); // Reset establishments to all
+                populateCategoriesCadre('', ''); // Reset categories to all
+                currentFilters.cadre = { dept: '', est: '', category: '', group: '', functional: '' };
+                // Clear selections
+                document.querySelectorAll('.group-card, .functional-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
                 applyCadreFilters();
             });
 
-            // Add event listeners for RR page
+            // Add click handlers for cadre page cards
+            document.querySelectorAll('.group-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    // Clear other group selections
+                    document.querySelectorAll('.group-card').forEach(c => c.classList.remove('selected'));
+                    
+                    if (currentFilters.cadre.group === this.dataset.group) {
+                        currentFilters.cadre.group = '';
+                        this.classList.remove('selected');
+                    } else {
+                        currentFilters.cadre.group = this.dataset.group;
+                        this.classList.add('selected');
+                    }
+                    applyCadreFilters();
+                });
+            });
+
+            document.querySelectorAll('.functional-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    // Clear other functional selections
+                    document.querySelectorAll('.functional-card').forEach(c => c.classList.remove('selected'));
+                    
+                    if (currentFilters.cadre.functional === this.dataset.function) {
+                        currentFilters.cadre.functional = '';
+                        this.classList.remove('selected');
+                    } else {
+                        currentFilters.cadre.functional = this.dataset.function;
+                        this.classList.add('selected');
+                    }
+                    applyCadreFilters();
+                });
+            });
+
+            // Add event listeners for RR page filters
             document.getElementById('dept-filter-rr').addEventListener('change', onDepartmentChangeRr);
-            document.getElementById('est-filter-rr').addEventListener('change', applyRrFilters);
-            document.getElementById('category-filter-rr').addEventListener('change', applyRrFilters);
+            document.getElementById('est-filter-rr').addEventListener('change', onEstablishmentChangeRr);
+            document.getElementById('category-filter-rr').addEventListener('change', () => {
+                currentFilters.rr.category = document.getElementById('category-filter-rr').value;
+                applyRrFilters();
+            });
             document.getElementById('clear-filter-rr').addEventListener('click', () => {
                 document.getElementById('dept-filter-rr').value = "";
                 document.getElementById('est-filter-rr').value = "";
                 document.getElementById('category-filter-rr').value = "";
                 populateEstablishmentsRr(''); // Reset establishments to all
+                populateCategoriesRr('', ''); // Reset categories to all
+                currentFilters.rr = { dept: '', est: '', category: '', group: '', status: '' };
+                // Clear selections
+                document.querySelectorAll('.group-card-rr, .revision-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
                 applyRrFilters();
+            });
+
+            // Add click handlers for RR page cards
+            document.querySelectorAll('.group-card-rr').forEach(card => {
+                card.addEventListener('click', function() {
+                    // Clear other group selections
+                    document.querySelectorAll('.group-card-rr').forEach(c => c.classList.remove('selected'));
+                    
+                    if (currentFilters.rr.group === this.dataset.group) {
+                        currentFilters.rr.group = '';
+                        this.classList.remove('selected');
+                    } else {
+                        currentFilters.rr.group = this.dataset.group;
+                        this.classList.add('selected');
+                    }
+                    applyRrFilters();
+                });
+            });
+
+            document.querySelectorAll('.revision-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    // Clear other status selections
+                    document.querySelectorAll('.revision-card').forEach(c => c.classList.remove('selected'));
+                    
+                    if (currentFilters.rr.status === this.dataset.status) {
+                        currentFilters.rr.status = '';
+                        this.classList.remove('selected');
+                    } else {
+                        currentFilters.rr.status = this.dataset.status;
+                        this.classList.add('selected');
+                    }
+                    applyRrFilters();
+                });
             });
         }
 
@@ -1124,4 +1465,3 @@ rrQualityChart = new Chart(document.getElementById('rr-quality-chart'), {
     </script>
 </body>
 </html>
-
